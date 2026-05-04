@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cleanotify - Automatizá las limpiezas de tu Airbnb por WhatsApp</title>
+<meta name="description" content="Conectá tu Airbnb (o tu CRM) con tus limpiadoras vía WhatsApp. Ahorrá 15+ horas semanales y eliminá errores de coordinación. No necesitás CRM para empezar.">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --primary: #00B894;
+  --primary-dark: #00A383;
+  --dark: #2D3436;
+  --gray: #636E72;
+  --light-gray: #DFE6E9;
+  --bg: #F5F7FA;
+  --white: #FFFFFF;
+  --accent: #FDCB6E;
+  --whatsapp: #25D366;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  color: var(--dark);
+  line-height: 1.6;
+  background: var(--white);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Navigation */
+nav {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--light-gray);
+  background: var(--white);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.logo span {
+  color: var(--dark);
+}
+
+.nav-cta {
+  background: var(--primary);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.nav-cta:hover {
+  background: var(--primary-dark);
+}
+
+/* Hero */
+.hero {
+  padding: 80px 0;
+  background: linear-gradient(135deg, #F5F7FA 0%, #E8F4F0 100%);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: rgba(0, 184, 148, 0.1);
+  color: var(--primary);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.hero h1 {
+  font-size: 52px;
+  line-height: 1.15;
+  margin-bottom: 20px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.hero h1 .highlight {
+  color: var(--primary);
+}
+
+.hero p {
+  font-size: 20px;
+  color: var(--gray);
+  margin-bottom: 32px;
+}
+
+.cta-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 16px 32px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 17px;
+  display: inline-block;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 184, 148, 0.3);
+}
+
+.btn-secondary {
+  background: white;
+  color: var(--dark);
+  border: 2px solid var(--light-gray);
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.hero-trust {
+  margin-top: 28px;
+  font-size: 14px;
+  color: var(--gray);
+}
+
+/* Phone mockup */
+.phone-mockup {
+  background: var(--dark);
+  border-radius: 36px;
+  padding: 16px;
+  max-width: 360px;
+  margin: 0 auto;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+}
+
+.phone-screen {
+  background: #ECE5DD;
+  border-radius: 24px;
+  padding: 20px;
+  min-height: 480px;
+}
+
+.whatsapp-header {
+  background: #075E54;
+  color: white;
+  padding: 16px;
+  margin: -20px -20px 16px -20px;
+  border-radius: 24px 24px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+}
+
+.contact-info h4 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.contact-info p {
+  font-size: 12px;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.message {
+  background: white;
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  max-width: 85%;
+  font-size: 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.message.sent {
+  background: #DCF8C6;
+  margin-left: auto;
+  border-radius: 12px 12px 0 12px;
+}
+
+.message strong {
+  color: #075E54;
+}
+
+.message-time {
+  font-size: 11px;
+  color: var(--gray);
+  text-align: right;
+  margin-top: 4px;
+}
+
+/* Stats Section */
+.stats {
+  padding: 60px 0;
+  background: var(--dark);
+  color: white;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* Features */
+.features {
+  padding: 100px 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-header h2 {
+  font-size: 40px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+}
+
+.section-header p {
+  font-size: 19px;
+  color: var(--gray);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.feature {
+  background: white;
+  padding: 36px;
+  border-radius: 16px;
+  border: 1px solid var(--light-gray);
+  transition: all 0.3s;
+}
+
+.feature:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  border-color: var(--primary);
+}
+
+.feature-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(0, 184, 148, 0.1);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.feature h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.feature p {
+  color: var(--gray);
+  font-size: 16px;
+}
+
+/* How it works */
+.how-it-works {
+  padding: 100px 0;
+  background: var(--bg);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  margin-top: 60px;
+}
+
+.step {
+  text-align: center;
+  position: relative;
+}
+
+.step-number {
+  width: 56px;
+  height: 56px;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0 auto 20px;
+}
+
+.step h4 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.step p {
+  font-size: 14px;
+  color: var(--gray);
+}
+
+/* Pricing */
+.pricing {
+  padding: 100px 0;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  max-width: 1000px;
+  margin: 60px auto 0;
+}
+
+.price-card {
+  background: white;
+  padding: 40px 32px;
+  border-radius: 20px;
+  border: 2px solid var(--light-gray);
+  text-align: center;
+  position: relative;
+}
+
+.price-card.featured {
+  border-color: var(--primary);
+  box-shadow: 0 20px 40px rgba(0, 184, 148, 0.15);
+  transform: scale(1.03);
+}
+
+.price-badge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: white;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.price-card h3 {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.price-card .price {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--primary);
+  margin: 20px 0;
+}
+
+.price-card .price small {
+  font-size: 16px;
+  color: var(--gray);
+  font-weight: 400;
+}
+
+.price-features {
+  list-style: none;
+  text-align: left;
+  margin: 30px 0;
+}
+
+.price-features li {
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+}
+
+.price-features li::before {
+  content: "✓";
+  color: var(--primary);
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* Testimonial */
+.testimonial-section {
+  padding: 100px 0;
+  background: var(--bg);
+}
+
+.testimonial {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  padding: 50px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.quote {
+  font-size: 22px;
+  font-style: italic;
+  margin-bottom: 24px;
+  color: var(--dark);
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.author-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.author-info {
+  text-align: left;
+}
+
+.author-name {
+  font-weight: 700;
+}
+
+.author-role {
+  font-size: 14px;
+  color: var(--gray);
+}
+
+/* FAQ */
+.faq {
+  padding: 100px 0;
+}
+
+.faq-grid {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border: 1px solid var(--light-gray);
+}
+
+.faq-item h4 {
+  font-size: 17px;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.faq-item p {
+  color: var(--gray);
+  font-size: 15px;
+}
+
+/* Final CTA */
+.final-cta {
+  padding: 100px 0;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  text-align: center;
+}
+
+.final-cta h2 {
+  font-size: 44px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  letter-spacing: -1px;
+}
+
+.final-cta p {
+  font-size: 20px;
+  margin-bottom: 32px;
+  opacity: 0.95;
+}
+
+.final-cta .btn-primary {
+  background: white;
+  color: var(--primary);
+}
+
+.final-cta .btn-primary:hover {
+  background: var(--bg);
+}
+
+/* Footer */
+footer {
+  padding: 40px 0;
+  background: var(--dark);
+  color: white;
+  text-align: center;
+}
+
+footer p {
+  opacity: 0.7;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-grid, .features-grid, .pricing-grid, .stats-grid, .steps {
+    grid-template-columns: 1fr;
+  }
+  .hero h1 { font-size: 36px; }
+  .section-header h2 { font-size: 30px; }
+  .price-card.featured { transform: none; }
+  .stats-grid { gap: 20px; }
+  .stat-number { font-size: 36px; }
+  .final-cta h2 { font-size: 32px; }
+  .testimonial { padding: 30px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <div class="container nav-container">
+    <div class="logo">Clean<span>otify</span></div>
+    <a href="#demo" class="nav-cta">Reservar demo</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-badge">🇦🇷 Hecho en Argentina, para LATAM</div>
+        <h1>Automatizá las limpiezas de tu Airbnb por <span class="highlight">WhatsApp</span></h1>
+        <p>Conectamos tu calendario de Airbnb (o tu CRM) con tus limpiadoras automáticamente. Te ahorra 15+ horas por semana y elimina errores de coordinación. <strong>Funciona también sin CRM.</strong></p>
+        <div class="cta-group">
+          <a href="#demo" class="btn btn-primary">Reservar demo gratis</a>
+          <a href="#como-funciona" class="btn btn-secondary">Cómo funciona</a>
+        </div>
+        <p class="hero-trust">⚡ Setup en 48hs · 🎁 Primer mes gratis · 💚 Sin permanencia · 🆓 Sin CRM también funciona</p>
+      </div>
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <div class="whatsapp-header">
+            <div class="avatar">CN</div>
+            <div class="contact-info">
+              <h4>Cleanotify Bot</h4>
+              <p>en línea</p>
+            </div>
+          </div>
+          <div class="message">
+            <strong>Hola María! 👋</strong><br>
+            Tenés una limpieza asignada para mañana:<br><br>
+            📍 <strong>Palermo Soho 1A</strong><br>
+            🏠 Av. Córdoba 4567<br>
+            🕐 11:00 a 12:30<br>
+            🔑 Código: 8472<br><br>
+            Por favor confirmá respondiendo "OK" 🙏
+            <div class="message-time">18:02</div>
+          </div>
+          <div class="message sent">
+            OK, anotado! 💪
+            <div class="message-time">18:04</div>
+          </div>
+          <div class="message">
+            ¡Perfecto! Mañana a las 10am te mandamos recordatorio.
+            <div class="message-time">18:04</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div>
+        <div class="stat-number">15+</div>
+        <div class="stat-label">Horas semanales ahorradas</div>
+      </div>
+      <div>
+        <div class="stat-number">90%</div>
+        <div class="stat-label">Menos errores de coordinación</div>
+      </div>
+      <div>
+        <div class="stat-number">48hs</div>
+        <div class="stat-label">Para tener tu sistema funcionando</div>
+      </div>
+      <div>
+        <div class="stat-number">$5</div>
+        <div class="stat-label">USD por propiedad / mes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features">
+  <div class="container">
+    <div class="section-header">
+      <h2>Pensado para gestores como vos</h2>
+      <p>Por un gestor con 25 propiedades. Solucionamos los dolores reales, no los teóricos.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">🔄</div>
+        <h3>Funciona con cualquier plataforma</h3>
+        <p>Airbnb directo, Booking, Vrbo, Lodgify, Hostaway. Las reservas y check-outs aparecen en tu sistema sin que toques nada. <strong>No necesitás CRM</strong> para empezar.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">💬</div>
+        <h3>WhatsApp nativo</h3>
+        <p>Tus limpiadoras siguen usando WhatsApp como siempre. No tienen que descargar apps ni aprender nada nuevo.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🤖</div>
+        <h3>Asignación inteligente</h3>
+        <p>El sistema asigna automáticamente la limpiadora ideal según zona, disponibilidad y carga del día.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📸</div>
+        <h3>Verificación con fotos</h3>
+        <p>Cada limpieza queda documentada con fotos antes/después. Perfecto para mostrar a propietarios y resolver disputas.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⏰</div>
+        <h3>Coordinación con huéspedes</h3>
+        <p>Pregunta automáticamente al huésped a qué hora hace check-out. Optimizá horarios y ofrecé late check-out.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🇦🇷</div>
+        <h3>Hecho para LATAM</h3>
+        <p>Pesos argentinos, español natural, integración con Mercado Pago. Soporte directo por WhatsApp con un humano real.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="how-it-works" id="como-funciona">
+  <div class="container">
+    <div class="section-header">
+      <h2>Cómo funciona</h2>
+      <p>De configuración a operación en menos de 48 horas</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h4>Conectás tu calendario</h4>
+        <p>Airbnb directo, Booking, Vrbo o tu CRM (Lodgify, Hostaway). Solo pegás un link, lo demás lo hacemos nosotros.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h4>Cargás tu equipo</h4>
+        <p>Tus limpiadoras con sus zonas, disponibilidad y tarifas. 5 minutos por persona.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h4>El sistema arranca</h4>
+        <p>Cada check-out genera automáticamente una tarea de limpieza con la limpiadora ideal.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">4</div>
+        <h4>Vos supervisás</h4>
+        <p>Mirás el dashboard 5 minutos por día. El sistema te alerta solo si algo necesita tu atención.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonial -->
+<section class="testimonial-section">
+  <div class="container">
+    <div class="testimonial">
+      <p class="quote">"Pasé de coordinar limpiezas todos los días por WhatsApp con caos total, a tener todo ordenado y automático. Recuperé fácil 18 horas por semana. Es lo más útil que sumé a mi operación en años."</p>
+      <div class="author">
+        <div class="author-avatar">G</div>
+        <div class="author-info">
+          <div class="author-name">Gonzalo D.</div>
+          <div class="author-role">Gestor de 25 propiedades · Buenos Aires</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-header">
+      <h2>Precio simple, sin sorpresas</h2>
+      <p>Pagás solo por las propiedades activas. Sin permanencia, cancelás cuando quieras.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card featured">
+        <div class="price-badge">MÁS POPULAR</div>
+        <h3>Básico</h3>
+        <p style="color: var(--gray); font-size: 14px; margin-top: -4px;">Para gestores con Airbnb directo, Booking o Vrbo</p>
+        <div class="price">$5<small>/propiedad/mes</small></div>
+        <ul class="price-features">
+          <li>Conexión vía iCal universal</li>
+          <li>Coordinación automática de limpiezas</li>
+          <li>WhatsApp a limpiadoras</li>
+          <li>Verificación con fotos</li>
+          <li>Mensajes a huéspedes (semi-auto)</li>
+          <li>Dashboard completo</li>
+          <li>Soporte por WhatsApp</li>
+        </ul>
+        <a href="#demo" class="btn btn-primary" style="display:block;">Reservar demo</a>
+      </div>
+      <div class="price-card">
+        <h3>Pro</h3>
+        <p style="color: var(--gray); font-size: 14px; margin-top: -4px;">Para gestores con CRM (Lodgify, Hostaway, Guesty)</p>
+        <div class="price">$10<small>/propiedad/mes</small></div>
+        <ul class="price-features">
+          <li>Todo lo del plan Básico</li>
+          <li>Sync completo con CRM</li>
+          <li>Datos de huésped automáticos</li>
+          <li>Mensajes a huéspedes 100% auto</li>
+          <li>Reportes a propietarios</li>
+          <li>Soporte prioritario</li>
+        </ul>
+        <a href="#demo" class="btn btn-secondary" style="display:block;">Reservar demo</a>
+      </div>
+      <div class="price-card">
+        <h3>Enterprise</h3>
+        <p style="color: var(--gray); font-size: 14px; margin-top: -4px;">Para 50+ propiedades</p>
+        <div class="price">A medida</div>
+        <ul class="price-features">
+          <li>Todo lo del plan Pro</li>
+          <li>Integraciones custom</li>
+          <li>Multi-idioma (es / en / pt)</li>
+          <li>Dashboard custom</li>
+          <li>Account manager dedicado</li>
+          <li>SLA garantizado</li>
+        </ul>
+        <a href="#demo" class="btn btn-secondary" style="display:block;">Contactar</a>
+      </div>
+    </div>
+    <p style="text-align: center; margin-top: 30px; color: var(--gray);">🎁 <strong>Primeros 25 clientes:</strong> 50% off de por vida (precio fundador)</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container">
+    <div class="section-header">
+      <h2>Preguntas frecuentes</h2>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <h4>¿Mis limpiadoras tienen que descargar una app?</h4>
+        <p>No. Siguen usando WhatsApp como siempre. Reciben mensajes mejor estructurados y con un link para confirmar fotos al final. Eso es todo.</p>
+      </div>
+      <div class="faq-item">
+        <h4>¿Necesito tener un CRM para usarlo?</h4>
+        <p>No. La mayoría de nuestros clientes maneja directo desde Airbnb sin CRM. Solo necesitás copiar el link iCal de tu calendario de Airbnb (toma 2 minutos por propiedad). También funciona con Booking, Vrbo, Lodgify, Hostaway, Guesty y Hospedium.</p>
+      </div>
+      <div class="faq-item">
+        <h4>¿Cuánto tarda el setup?</h4>
+        <p>48 horas hábiles. Nosotros configuramos todo, vos solo nos pasás los datos por un Google Form.</p>
+      </div>
+      <div class="faq-item">
+        <h4>¿Hay permanencia o contrato?</h4>
+        <p>No. Pagás mes a mes. Si no te sirve, cancelás cuando quieras. Primer mes gratis siempre.</p>
+      </div>
+      <div class="faq-item">
+        <h4>¿Cómo se paga?</h4>
+        <p>Mercado Pago, transferencia bancaria, o tarjeta internacional. En pesos argentinos al cambio del día.</p>
+      </div>
+      <div class="faq-item">
+        <h4>¿Qué pasa si una limpiadora no responde el mensaje?</h4>
+        <p>El sistema te alerta automáticamente a las 12 horas. Vos podés reasignar con un click o hacer follow-up manual.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="final-cta" id="demo">
+  <div class="container">
+    <h2>Recuperá 15+ horas por semana</h2>
+    <p>Reservá una demo de 30 minutos. Te mostramos el sistema funcionando con propiedades reales.</p>
+    <a href="https://calendly.com/tu-usuario/demo" class="btn btn-primary">Reservar demo gratis →</a>
+    <p style="margin-top: 24px; opacity: 0.9; font-size: 16px;">o escribinos al WhatsApp: <strong>+54 9 11 XXXX-XXXX</strong></p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <p>© 2026 Cleanotify · Hecho con 💚 en Argentina</p>
+    <p style="margin-top: 8px;">contacto@cleanotify.com</p>
+  </div>
+</footer>
+
+</body>
+</html>
